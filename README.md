@@ -4,24 +4,19 @@
 ## User Story
 
 En tant qu’opérateur de ligne,
-je veux que la machine automatisée détecte l’arrivée d’une batterie, la positionne correctement, puis réalise automatiquement le vissage du couvercle,
-afin de réduire les interventions manuelles et assurer un assemblage rapide et sûr.
+je veux que la machine automatisée mesure la tension de la batterie, et à partir d'un certain seuil, mettre le convoyeur en marche pour permettre de trier les batterie, et assurer la rapidité.
 
 ## Fonctionnement
 
-Capteur 1 : Détecteur de présence → confirme qu’une batterie est arrivée sur le convoyeur.
+Capteur 1 : Capteur de mesure de tension : mesure la tension de la batterie.
 
-Capteur 2 : Détecteur de position → vérifie que la batterie est bien centrée sous la visseuse.
-
-Actionneur 1 : Vérin de blocage → maintient la batterie en place pendant l’opération.
-
-Actionneur 2 : Visseuse automatique → effectue le serrage du couvercle.
+Actionneur 1 : Moteur du convoyeur → A partir de 36V mettre le convoyeur en marche.
 
 ## Critères d’acceptation
 
-Quand le capteur 1 détecte la batterie, le convoyeur s’arrête.
+Quand le capteur 1 mesure la tension de la batterie, un afficheur affiche la partie entière.
 
-Si le capteur 2 confirme le bon positionnement, le vérin (actionneur 1) se déploie pour bloquer la batterie.
+Si la tension est superieur à 36V alors le convoyeur se met en marche pour mener la batterie au stand d'éxpédition, autrement, le convoyeur reste éteint.
 
 Une fois bloquée, la visseuse (actionneur 2) démarre automatiquement.
 
