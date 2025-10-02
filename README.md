@@ -24,5 +24,6 @@ Une fois bloquée, la visseuse (actionneur 2) démarre automatiquement.
 
 En cas de non-détection du capteur 2, la machine reste en attente et signale une erreur à l’opérateur.
 
+
 ### Illustration
-![alt text](image.png)
+![Schéma de la machine](image.png)
