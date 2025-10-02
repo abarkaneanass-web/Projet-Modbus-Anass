@@ -55,7 +55,7 @@ def temperature_simulation(context, slave_id=SLAVE_ID):
 
 if __name__ == "__main__":
     # -------- Configuration initiale --------
-    # Coil 0 = bouton chauffage (ON/OFF)
+    # Coil 0 = bouton chargeur(ON/OFF)
     # Discrete Inputs:
     #   DI 0 = capteur > 42V
     #   DI 1 = capteur < 30V
