@@ -20,4 +20,4 @@ Si la tension est supérieur ou égale à 42V alors le chargeur se met en sécur
 Une fois déchargée, en dessous de 30V, le chargeur est activé.
 
 ### Illustration
-![Schéma de la machine](img2.png)
+![Schéma de la machine](img1.png)
