@@ -26,4 +26,4 @@ En cas de non-détection du capteur 2, la machine reste en attente et signale un
 
 
 ### Illustration
-![Schéma de la machine](image2.png)
+![Schéma de la machine](img2.png)
