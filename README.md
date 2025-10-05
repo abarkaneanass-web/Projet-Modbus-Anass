@@ -3,27 +3,21 @@
 
 ## User Story
 
-En tant qu’opérateur de ligne,
-je veux que la machine automatisée mesure la tension de la batterie, et à partir d'un certain seuil, mettre le convoyeur en marche pour permettre de trier les batterie, et assurer la rapidité.
+Une batterie alimente une caméra vdéosurveillance qui fonctionne 24H/24, je veux que le système détécte lorsque la batterie atteint la charge maximum ou minimum, afin d'optimiser le cycle de recharge et donc garder la batterie le plus longtemps possible.
 
 ## Fonctionnement
 
 Capteur 1 : Capteur de mesure de tension : mesure la tension de la batterie.
 
-Actionneur 1 : Moteur du convoyeur → A partir de 36V mettre le convoyeur en marche.
+Actionneur 1 : Active ou désactive la charge de labatterie 
 
 ## Critères d’acceptation
 
 Quand le capteur 1 mesure la tension de la batterie, un afficheur affiche la partie entière.
 
-Si la tension est superieur à 36V alors le convoyeur se met en marche pour mener la batterie au stand d'éxpédition, autrement, le convoyeur reste éteint.
+Si la tension est supérieur ou égale à 42V alors le chargeur se met en sécurité et n'alimente plus la battere
 
-Une fois bloquée, la visseuse (actionneur 2) démarre automatiquement.
-
-À la fin du vissage, le vérin se rétracte et le convoyeur redémarre.
-
-En cas de non-détection du capteur 2, la machine reste en attente et signale une erreur à l’opérateur.
-
+Une fois déchargée, en dessous de 30V, le chargeur est activé.
 
 ### Illustration
-![Schéma de la machine](image.png)
+![Schéma de la machine](img1.png)
