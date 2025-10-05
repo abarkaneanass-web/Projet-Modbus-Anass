@@ -1,16 +1,92 @@
+from threading import Thread
+import time
+import random
 from pymodbus.server import StartTcpServer
 from pymodbus.datastore import ModbusSequentialDataBlock, ModbusDeviceContext, ModbusServerContext
 
-# Initialisation des données (coils, holding registers, etc.)
-store = ModbusDeviceContext(
-    di=ModbusSequentialDataBlock(0, [0]*100),    # Discrete Inputs
-    co=ModbusSequentialDataBlock(0, [0]*100),    # Coils
-    hr=ModbusSequentialDataBlock(0, [13]*100),   # Holding Registers
-    ir=ModbusSequentialDataBlock(0, [0]*100)     # Input Registers
-)
+SLAVE_ID = 0
 
-# Contexte du serveur (1 slave par défaut, unit_id=1)
-context = ModbusServerContext(devices = store, single=True)
+STORE_CO = 1
+CO_CHARGER = 0
 
-# Démarrer le serveur sur le port 5020
-StartTcpServer(context=context, address=("0.0.0.0", 502))
+STORE_DI = 2
+DI_HIGH_TENSION = 0
+DI_LOW_TENSION = 1
+
+STORE_IR = 4
+IR_TEMPERATURE = 0
+
+# -------- Simulation de la température --------
+def temperature_simulation(context, slave_id=SLAVE_ID):
+    tension = 36
+    charger_on = False
+    while True:
+        # Logique de chargeur : s'active à <=30V, reste ON jusqu'à 42V, puis OFF jusqu'à retomber à 30V
+        if not charger_on and tension <= 30:
+            charger_on = True
+            context[slave_id].setValues(STORE_CO, CO_CHARGER, [1])  # Active le chargeur
+        elif charger_on and tension >= 42:
+            charger_on = False
+            context[slave_id].setValues(STORE_CO, CO_CHARGER, [0])  # Désactive le chargeur
+
+        # Faire varier la tension
+        if charger_on:
+            tension += random.uniform(0.4, 0.9)
+        else:
+            tension -= random.uniform(0.3, 0.7)
+
+        # bornes
+        if tension < 30:
+            tension = 30
+        if tension > 42:
+            tension = 42
+
+        # Écrire dans registre (Input Register 0, valeur entière)
+        context[slave_id].setValues(STORE_IR, IR_TEMPERATURE, [int(tension)]) 
+
+        # Capteurs discrets
+        high_tension = 1 if tension > 42 else 0
+        low_tension = 1 if tension < 30 else 0
+
+        context[slave_id].setValues(STORE_DI, DI_HIGH_TENSION, [high_tension])  # DI0
+        context[slave_id].setValues(STORE_DI, DI_LOW_TENSION, [low_tension])   # DI1
+
+        # Calcul du pourcentage de charge
+        pourcentage = int((tension - 30) / (42 - 30) * 100)
+        if pourcentage < 0:
+            pourcentage = 0
+        if pourcentage > 100:
+            pourcentage = 100
+
+        # Affichage console
+        print(f"Tension de la batterie = {tension:.1f} V | Chargeur={'ON' if charger_on else 'OFF'} | Charge = {pourcentage}%")
+
+        time.sleep(1)
+
+
+
+if __name__ == "__main__":
+    # -------- Configuration initiale --------
+    # Coil 0 = bouton chargeur(ON/OFF)
+    # Discrete Inputs:
+    #   DI 0 = capteur > 42V
+    #   DI 1 = capteur < 30V
+    # Input Register 0 = température courante (°C * 10 pour garder 1 décimale si besoin)
+
+    store = ModbusDeviceContext(
+        di=ModbusSequentialDataBlock(SLAVE_ID, [0] * 10),
+        co=ModbusSequentialDataBlock(SLAVE_ID, [0] * 10),
+        hr=ModbusSequentialDataBlock(SLAVE_ID, [0] * 10),
+        ir=ModbusSequentialDataBlock(SLAVE_ID, [0] * 10)
+    )
+
+    context = ModbusServerContext(devices=store, single=True)
+
+    # Lancement du thread de simulation de température
+    sim_thread = Thread(target=temperature_simulation, args=(context,))
+    sim_thread.daemon = True
+    sim_thread.start()
+
+    # Démarrage du serveur Modbus TCP sur le port 502
+    print("Serveur Modbus TCP démarré sur le port 502...")
+    StartTcpServer(context, address=("0.0.0.0", 502))
